@@ -5,10 +5,10 @@
 The Command Line Parser is an easy to use command line parser for Bash shell
 scripts.  The interface is such that you define the command line options, any
 arguments, and a description of what the command does. Then you parse the input
-options in the *${@}* variable. Finally, you call a *get* function to retrieve
+options in the *${@}* variable. Finally, you call a *get()* function to retrieve
 your options. Because of the information provided by the user, it is trivial to
 display a usage message; all the pertinent information is already provided. If
-an input error occurs, usage() will be called. For examples of how to use it,
+an input error occurs, *usage()* will be called. For examples of how to use it,
 click [here](#example).
 
 When declaring command line options, there are various different types of
