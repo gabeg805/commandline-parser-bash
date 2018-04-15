@@ -521,8 +521,10 @@ cli_usage_line()
 cli_option_find()
 {
     local opt="${1}"
-    local key="$(cli_option_get_key "${opt}")"
-    local status=$?
+    local status=0
+    local key=
+    key="$(cli_option_get_key "${opt}")"
+    status=$?
     if [ ${status} -ne 0 ]
     then
         return ${status}
@@ -596,11 +598,14 @@ cli_option_get_key()
         return ${EXIT_INVALID_GET_KEY}
     fi
     local key="$(cli_option_get_option_field "${1}")"
-    local element="${CLI_OPTION["${key}"]}"
+    local element="${CLI_OPTION[${key}]}"
     if [ -z "${element}" ]
     then
-        key="${CLI_OPTION_MAP["${key}"]}"
-        element=(${CLI_OPTION["${key}"]})
+        key="${CLI_OPTION_MAP[${key}]}"
+        if [ -n "${key}" ]
+        then
+            element="${CLI_OPTION[${key}]}"
+        fi
     fi
     if [ -z "${element}" ]
     then
