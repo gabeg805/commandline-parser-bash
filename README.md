@@ -2,64 +2,60 @@
 
 ## Introduction
 
-The Command Line Parser is an easy to use command line parser for C++
-programs. It takes 3 statements, and your program will be able to parse the
-command line options, no problem. Because of the information provided by the
-user, it is trivial to display a usage message; all the pertinent information is
-already provided. If an error occurs, commandline::interface::usage() will be
-called. For examples of how to use it, click [here](#example).
+The Command Line Parser is an easy to use command line parser for Bash shell
+scripts.  The interface is such that you define the command line options, any
+arguments, and a description of what the command does. Then you parse the input
+options in the *${@}* variable. Finally, you call a *get* function to retrieve
+your options. Because of the information provided by the user, it is trivial to
+display a usage message; all the pertinent information is already provided. If
+an input error occurs, usage() will be called. For examples of how to use it,
+click [here](#example).
 
 When declaring command line options, there are various different types of
-options that can be used. The options are differentiated by what type of
-arguments they may take:
-- **no_argument**: This option does not take an argument.
-- **optional_argument**: This option may or may not take an argument.
-- **list_argument**: This argument takes one or more arguments. Arguments stop
+arguments that can be used. They are denoted by the use of ':' characters after
+the argument name in the long option section.
+- **argument** = This option does not take an argument.
+- **argument:** = This option takes a single, required argument.
+- **argument::** = This option may or may not take an argument.
+- **argument:::** = This argument takes one or more arguments. Arguments stop
     being read once a new option is encountered.
-- **required_argument**: This option takes a single, required argument.
 
 ## Example
 
 A standard way of initializing your command line options would be something like:
 ```
-commandline::optlist_t options{
-    {"-h",  "--help",           "",      commandline::no_argument,       "Print program usage."},
-    {"-o",  "--option",         "title", commandline::optional_argument, "A command line option."},
-    {"-a",  "--another-option", "title", commandline::list_argument,     "Another command line option."},
-    {"-lo", "--longer-option",  "body",  commandline::required_argument, "A longer command line option."}
-};
+cli_options "-h|--help            |Print program usage." \
+            "-o|--option=required:|Option with a required argument." \
+            "  |--another-option  |Just a long option, no short option and no argument." \
+            "-s|--stuff=optional::|Optional argument for this option." \
+            "-t|--things=list:::  |Do things with this list argument." \
+            "-v|--verbose         |Verbose output."
+cli_parse "${@}"
 ...
-commandline::interface cli(options);
-cli.parse(argv);
+option=$(cli_get "option")
+another=$(cli_get "another-option")
+stuff=$(cli_get "stuff")
+things=$(cli_get "things")
+...
 ```
 
 In order, this will do the following:
 1. Define the possible command line options for your program.
-2. Add them to the command line interface object so that it knows the
+2. Add them to the command line options global variable so that it knows the
    possible options.
-3. Parse the user input through the *argv* variable from main(argc, argv).
+3. Parse the user input through the *${@}* variable.
+4. Calling *cli_get* will either return the argument and exit with a status of
+   0, or return nothing and the exit status will be non-zero.
 
 ## Install
 
-Copy the source and header files to the appropriate source and include
-directories in your project.
+Copy the shell script to your location of choice of source the file in your
+script using:
 
-**Important**: Make sure you have the following macro defined in the command
-  line, or in the header file.
 ```
-#define PROGRAM <program-name>
-```
-
-To add it in the command line, your *g++* options should look something like:
-```
-g++ ... -DPROGRAM="<program-name>..."
-```
-
-And if you're doing it in your Makefile, be sure to escape the quotes.
-```
-g++ ... -DPROGRAM="\"<program-name>...\""
+. "/path/to/file/commandline.sh"
 ```
 
 ## Uninstall
 
-Remove the source and header files from your project.
+Remove the file from where you copied it and delete the line above, which sources it.
