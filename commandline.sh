@@ -179,7 +179,7 @@ cli_parse()
 
         # Parse the argument
         key="${info[0]}"
-        type="${info[2]}"
+        type="${info[3]}"
         arg=$(cli_parse_argument "${key}" "${type}" "${@}")
         status=$?
         if [ ${status} -ne 0 ]
@@ -257,8 +257,8 @@ cli_usage()
         local full=($(cli_option_find_full "${opt}"))
         local key="${full[0]}"
         local other="${full[1]}"
-        local desc="${full[3]}"
-        local argname="${full[4]}"
+        local argname="${full[2]}"
+        local desc="${full[4]}"
         local line=$(cli_usage_line "${key}" "${other}" "${argname}")
         echo "    ${line}"
         echo "        ${desc}" | fmt -c -w 80
@@ -297,7 +297,16 @@ cli_option_add()
            exit ${EXIT_INVALID_ARGUMENT_TYPE}
            ;;
     esac
-    cli_option_add_key "${key}" "${other}" "${type}" "${desc}" "${argname//:/}"
+    argname="${argname//:/}"
+    if [ -z "${other}" ]
+    then
+        other="none"
+    fi
+    if [ -z "${argname}" ]
+    then
+        argname="none"
+    fi
+    cli_option_add_key "${key}" "${other}" "${argname}" "${type}" "${desc}"
     cli_option_add_conv "${other}" "${key}"
 }
 
@@ -329,7 +338,7 @@ cli_option_add_conv()
 {
     local other="${1}"
     local key="${2}"
-    if [ -z "${other}" ]
+    if [ -z "${other}" -o "${other}" == "none" ]
     then
         return ${EXIT_INVALID_OPTION}
     fi
@@ -536,20 +545,20 @@ cli_usage_line()
     local other="${2}"
     local argname="${3}"
     local line=
-    if [ -n "${other}" ]
+    if [ -n "${other}" -a "${other}" != "none" ]
     then
         line="${other}"
     fi
     if [ -n "${key}" ]
     then
-        if [ -n "${other}" ]
+        if [ -n "${line}" ]
         then
             line+=", ${key}"
         else
             line="${key}"
         fi
     fi
-    if [ -n "${argname}" ]
+    if [ -n "${argname}" -a "${argname}" != "none" ]
     then
         if [ -n "${key}" ]
         then
@@ -617,11 +626,15 @@ cli_option_find_full()
 cli_option_list()
 {
     local n=$(cli_option_get_length)
+    local o=
     if [ ${n} -eq 0 ]
     then
         return ${EXIT_OPTION_LENGTH_ZERO}
     else
-        echo "${!CLI_OPTION[@]}"
+        for o in "${!CLI_OPTION[@]}"
+        do
+            echo "${o}"
+        done
     fi
     return 0
 }
@@ -632,11 +645,15 @@ cli_option_list()
 cli_input_list()
 {
     local n=$(cli_input_get_length)
+    local i=
     if [ ${n} -eq 0 ]
     then
         return ${EXIT_INPUT_LENGTH_ZERO}
     else
-        echo "${!CLI_INPUT[@]}"
+        for i in "${!CLI_INPUT[@]}"
+        do
+            echo "${i}"
+        done
     fi
     return 0
 }
