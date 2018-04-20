@@ -52,15 +52,14 @@
 #     * EXIT_INVALID_ARGUMENT_TYPE = 1
 #     * EXIT_INVALID_OPTION        = 2
 #     * EXIT_INVALID_ARGUMENT      = 3
-#     * EXIT_HELP                  = 4
-#     * EXIT_OPTION_NOT_FOUND      = 5
-#     * EXIT_INDEX_NOT_FOUND       = 6
-#     * EXIT_OPTION_LENGTH_ZERO    = 7
-#     * EXIT_INPUT_LENGTH_ZERO     = 8
-#     * EXIT_INVALID_FIELD         = 9
-#     * EXIT_INVALID_GET_OPTION    = 10
-#     * EXIT_INVALID_GET_KEY       = 11
-#     * EXIT_GET_OPTION_NOT_FOUND  = 12
+#     * EXIT_OPTION_NOT_FOUND      = 4
+#     * EXIT_INDEX_NOT_FOUND       = 5
+#     * EXIT_OPTION_LENGTH_ZERO    = 6
+#     * EXIT_INPUT_LENGTH_ZERO     = 7
+#     * EXIT_INVALID_FIELD         = 8
+#     * EXIT_INVALID_GET_OPTION    = 9
+#     * EXIT_INVALID_GET_KEY       = 10
+#     * EXIT_GET_OPTION_NOT_FOUND  = 11
 # 
 # ------------------------------------------------------------------------------
 
@@ -98,15 +97,14 @@ CLI_ARGUMENT_TYPE_LIST=3
 EXIT_INVALID_ARGUMENT_TYPE=1
 EXIT_INVALID_OPTION=2
 EXIT_INVALID_ARGUMENT=3
-EXIT_HELP=4
-EXIT_OPTION_NOT_FOUND=5
-EXIT_INDEX_NOT_FOUND=6
-EXIT_OPTION_LENGTH_ZERO=7
-EXIT_INPUT_LENGTH_ZERO=8
-EXIT_INVALID_FIELD=9
-EXIT_INVALID_GET_OPTION=10
-EXIT_INVALID_GET_KEY=11
-EXIT_GET_OPTION_NOT_FOUND=12
+EXIT_OPTION_NOT_FOUND=4
+EXIT_INDEX_NOT_FOUND=5
+EXIT_OPTION_LENGTH_ZERO=6
+EXIT_INPUT_LENGTH_ZERO=7
+EXIT_INVALID_FIELD=8
+EXIT_INVALID_GET_OPTION=9
+EXIT_INVALID_GET_KEY=10
+EXIT_GET_OPTION_NOT_FOUND=11
 
 ##
 # Define all the command line options and how they should be used.
@@ -183,10 +181,6 @@ cli_parse()
         status=$?
         if [ ${status} -ne 0 ]
         then
-            if [ ${status} -eq ${EXIT_HELP} ]
-            then
-                status=0
-            fi
             exit ${status}
         fi
 
@@ -375,7 +369,7 @@ cli_parse_argument()
 
     if cli_argument_type_is_none "${type}"
     then
-        arg="$(cli_parse_argument_none "${key}")" || return ${EXIT_HELP}
+        arg="$(cli_parse_argument_none "${key}")"
     elif cli_argument_type_is_required "${type}"
     then
         arg="$(cli_parse_argument_required "${opt}" "${1}")"
@@ -408,12 +402,6 @@ cli_parse_argument()
 ##
 cli_parse_argument_none()
 {
-    local key="${1}"
-    if [ "${key}" == "--help" ]
-    then
-        cli_usage 1>&2
-        return 1
-    fi
     echo "true"
     return 0
 }
