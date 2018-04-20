@@ -160,6 +160,11 @@ cli_parse()
     local skip=
     local status=0
 
+    if [ $# -eq 0 ]
+    then
+        cli_usage
+        exit 0
+    fi
     while [ -n "${1}" ]
     do
         # Option information
