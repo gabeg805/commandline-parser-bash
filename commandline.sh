@@ -149,9 +149,6 @@ cli_options()
 # Options with no arguments will have an argument value of 'true', to indicate
 # the option has been set. Options with a LIST argument type will have their
 # values separated by a '|'.
-# 
-# Note: Parsing will also automatically catch the '--help' option. To change
-# this functionality, see cli_parse_argument_none().
 ##
 cli_parse()
 {
@@ -396,9 +393,6 @@ cli_parse_argument()
 
 ##
 # Parse an argument with the type NONE.
-# 
-# If the automatic detection of the '--help' option is not desired, just have
-# this function echo "true" and return 0.
 ##
 cli_parse_argument_none()
 {
