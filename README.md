@@ -11,8 +11,9 @@ scripts. The interface is such that you:
 2. Parse the input options with the *cli_parse()* function.
 3. Call the *cli_get()* function to retrieve your options for a given option.
 
-With the given information, *cli_usage()* is used to automatically generate a
-help message.
+It is also possible to print out command line usage, if the user should required
+it, via the *cli_usage()* function, which is generated automatically from all
+the information provided in Step 1.
 
 ## Example
 
@@ -33,16 +34,12 @@ things=$(cli_get "things")
 ...
 ```
 
-In order, this will do the following:
-1. Define the possible command line options for your program.
-2. Add them to the command line options global variable so that it knows the
-   possible options.
-3. Parse the user input through the *${@}* variable.
-4. Calling *cli_get* will either return the argument and exit with a status of
-   0, or return nothing and the exit status will be non-zero.
+When calling *cli_get()*, use the long option name, without the leading two
+dashes. However, if no long option name exists, use the short option without the
+leading dash.
 
-For more information on the types of arguments and the meaning behind the ":",
-click [here](#types-of-arguments).
+For more information on the types of arguments and the meaning behind the color
+character, click [here](#types-of-arguments).
 
 ## Install
 
