@@ -5,9 +5,9 @@
 The Command Line Parser is an easy to use command line parser for Bash shell
 scripts. The interface is such that you:
 1. Use the *cli_options()* function to:
-  a. Define the command line options.
-  b. Define arguments for the option, if any.
-  c. Give a description of what the command does.
+    - Define the command line options.
+    - Define arguments for the option, if any.
+    - Give a description of what the command does.
 2. Parse the input options with the *cli_parse()* function.
 3. Call the *cli_get()* function to retrieve your options for a given option.
 
@@ -41,8 +41,8 @@ In order, this will do the following:
 4. Calling *cli_get* will either return the argument and exit with a status of
    0, or return nothing and the exit status will be non-zero.
 
-For more information on the types of arguments and the meaning behind the ':',
-click [here](#types).
+For more information on the types of arguments and the meaning behind the ":",
+click [here](#types-of-arguments).
 
 ## Install
 
