@@ -69,7 +69,7 @@
 # 
 # Determined by taking the basename of the parent shell script.
 ##
-PROJECT=
+PROJECT="${0##*/}"
 
 ##
 # Command line interface option information.
@@ -157,7 +157,6 @@ cli_options()
 ##
 cli_parse()
 {
-    PROJECT="${0##*/}"
     local opt=
     local info=
     local key=
