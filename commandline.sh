@@ -280,7 +280,7 @@ cli_option_add()
     local key="${1// /}"
     local other="${2// /}"
     local argname="${3// /}"
-    local desc="${4}"
+    local desc=$(echo "${4}" | sed 's/^[ \t]*//')
     local type=
     local count=$(echo "${argname}" | tr -c -d ':' | wc -c)
     case ${count} in
