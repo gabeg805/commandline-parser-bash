@@ -137,7 +137,6 @@ cli_options()
                 key="${long}"
             fi
         fi
-
         cli_option_add "${key}" "${other}" "${argument}" "${description}"
     done
     return 0
@@ -466,10 +465,7 @@ cli_parse_argument_optional()
 cli_parse_argument_list()
 {
     local opt="${1}"
-    shift
     local arg=
-    local nextinfo=
-    local next="${1}"
 
     if cli_option_is_long "${opt}"
     then
@@ -481,22 +477,29 @@ cli_parse_argument_list()
             return ${EXIT_INVALID_ARGUMENT}
         fi
     else
-        # Make sure next item is not an option
-        nextinfo=($(cli_option_find "${next}"))
-        if [ $? -eq 0 -o -z "${next}" ]
-        then
-            echo "${PROJECT}: An argument must be given for option '${opt}'." 1>&2
-            return ${EXIT_INVALID_ARGUMENT}
-        fi
-
-        # Append options
-        for a in "${@}"
+        local next=
+        local nextinfo=
+        while true
         do
+            shift
+            # Make sure next item is not an option
+            next="${1}"
+            nextinfo=($(cli_option_find "${next}"))
+            if [ $? -eq 0 -o -z "${next}" ]
+            then
+                if [ -z "${arg}" ]
+                then
+                    echo "${PROJECT}: An argument must be given for option '${opt}'." 1>&2
+                    return ${EXIT_INVALID_ARGUMENT}
+                fi
+                break
+            fi
+            # Append options
             if [ -z "${arg}" ]
             then
-                arg="${a}"
+                arg="${next}"
             else
-                arg="${arg}|${a}"
+                arg="${arg}|${next}"
             fi
         done
     fi
@@ -694,8 +697,8 @@ cli_option_get_key()
     then
         return ${EXIT_INVALID_GET_KEY}
     fi
-    key="$(cli_option_get_option_field "${opt}")"
-    arg="$(cli_option_get "${key}")"
+    key=$(cli_option_get_option_field "${opt}")
+    arg=$(cli_option_get "${key}")
     if [ $? -ne 0 ]
     then
         key="$(cli_option_get_conv "${key}")"
@@ -769,19 +772,22 @@ cli_option_get_field()
     local string="${1}"
     local field="${2}"
     case "${field}" in
-        1) echo "${string%%=*}"
-           ;;
+        1)
+            printf "%s\n" "${string%%=*}"
+            ;;
 
-        2) if [ "${string//=/}" != "${string}" ]
-           then
-               echo "${string##*=}"
-           else
-               echo "true"
-           fi
-           ;;
+        2)
+            if [ "${string//=/}" != "${string}" ]
+            then
+                printf "%s\n" "${string##*=}"
+            else
+                printf "true\n"
+            fi
+            ;;
 
-        *) return ${EXIT_INVALID_FIELD}
-           ;;
+        *)
+            return ${EXIT_INVALID_FIELD}
+            ;;
     esac
     return 0
 }
